@@ -1,0 +1,39 @@
+const axios = require('axios');
+
+async function fetchJokes() {
+  const apiUrl = 'https://v2.jokeapi.dev/joke/Any';
+  const numberOfJokes = 20;
+  const delayInSeconds = 2; 
+
+  try {
+    const jokes = [];
+    for (let i = 0; i < numberOfJokes; i++) {
+      const response = await axios.get(apiUrl);
+      jokes.push(response.data);
+      await delay(delayInSeconds * 1000); 
+    }
+    
+
+    const counts = {};
+    jokes.forEach((joke) => {
+      const categories = Array.isArray(joke.category) ? joke.category : [joke.category || 'Uncategorized'];
+      categories.forEach((category) => {
+        if (counts.hasOwnProperty(category)) {
+          counts[category]++;
+        } else {
+          counts[category] = 1;
+        }
+      });
+    });
+
+    console.log(counts);
+  } catch (error) {
+    console.error('Error fetching jokes:', error.message);
+  }
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+fetchJokes();
